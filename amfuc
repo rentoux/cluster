@@ -1,0 +1,78 @@
+library(readr)
+
+install.packages("curl")
+
+# Read the file with a pipe delimiter
+movies <- read_delim("https://files.grouplens.org/datasets/movielens/ml-100k/u.item", delim = "|")
+
+movies <- read.table("https://files.grouplens.org/datasets/movielens/ml-100k/u.item", 
+                     header = FALSE, sep = "|", quote = "\"")
+
+# Change the column names
+colnames(movies) <- c(
+  "ID", "Title", "ReleaseDate",
+  "VideoReleaseDate", "IMDB",
+  "Unknown", "Action", "Adventure",
+  "Animation", "Childrens", "Comedy",
+  "Crime", "Documentary", "Drama",
+  "Fantasy", "FilmNoir", "Horror",
+  "Musical", "Mystery", "Romance",
+  "SciFi", "Thriller", "War",
+  "Western"
+)
+
+#remove ID, ReleaseDate, ReleaseDate, and VideoReleaseDate
+movies$ID = NULL
+movies$ReleaseDate = NULL
+movies$VideoReleaseDate = NULL
+IMDB = NULL
+
+#remove duplicates
+movies = unique(movies)
+
+#first step: calculate distances
+distances = dist(movies[2:20],
+                 method="euclidean")
+
+#second step: clustering
+clusterMovies = hclust(distances,
+                       method="ward")
+
+#plot
+plot(clusterMovies)
+
+#label each data points per cluster
+clusterGroups =
+  cutree(clusterMovies, k=10)
+
+#divide data points into 10 clusters, then computes for the average of every cluster
+tapply(movies$Action,
+       clusterGroups, mean)
+
+#label each data points per cluster
+clusterGroups =
+  cutree(clusterMovies, k=10)
+
+#divide data points into 10 clusters, then computes for the average of every cluster
+tapply(movies$Action,
+       clusterGroups, mean)
+
+#divide data points into 10 clusters, then computes for the average of every cluster
+tapply(movies$Romance,
+       clusterGroups, mean)
+
+#create spreadsheet
+
+#specifying the cluster
+subset(movies, Title=="Men in
+       Black (1997)")
+
+#checking what cluster
+clusterGroups[257]
+
+#subset for cluster 2
+cluster2 <- subset(movies,
+                   clusterGroups==2)
+
+#checking movies in cluster 2
+cluster2$Title[1:10]
